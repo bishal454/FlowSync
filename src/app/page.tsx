@@ -15,11 +15,17 @@ const Page = () => {
   const queryClient = useQueryClient();
   const { data } = useQuery(trpc.getWorkflows.queryOptions()); //fetch  a  workflows from the server using trpc and useQuery hook .
 
+  const testAi = useMutation(trpc.testAi.mutationOptions({
+    onSuccess: () => {
+        toast.success("Ai job queued");
+      },
+}));
+
   const create = useMutation(
     //to create a new workflow using trpc and useMutation hook and we are also using the trpc client to call the trpc procedures
     trpc.createWorkflow.mutationOptions({
       onSuccess: () => {
-        toast.success("jon queued");
+        toast.success("job queued");
       }, // to invalidate the queries after creating a new workflow so that we can get the updated list of workflows.
     }),
   );
@@ -27,6 +33,9 @@ const Page = () => {
     <div className="min-h-screen min-w-screen flex items-center justify-center">
       Protected server component.
       <div>{JSON.stringify(data, null, 2)}</div>
+      <Button disabled={testAi.isPending} onClick={() => testAi.mutate()}>
+        Test AI
+      </Button>
       <Button disabled={create.isPending} onClick={() => create.mutate()}>
         Create Workflow
       </Button>
