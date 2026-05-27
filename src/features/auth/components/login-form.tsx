@@ -24,6 +24,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
+import Image from "next/image";
 
 const loginSchema = z.object({
   email: z.email("Please enter a valid email address"),
@@ -85,6 +86,12 @@ export function LoginForm() {
                     disabled={isPending}
                     type="button"
                   >
+                    <Image
+                      src="/logos/github.svg"
+                      alt="Github"
+                      width={20}
+                      height={20}
+                    />
                     continue with Github
                   </Button>
                   <Button
@@ -93,6 +100,12 @@ export function LoginForm() {
                     disabled={isPending}
                     type="button"
                   >
+                    <Image
+                      src="/logos/google.svg"
+                      alt="Google"
+                      width={20}
+                      height={20}
+                    />
                     continue with Google
                   </Button>
                 </div>

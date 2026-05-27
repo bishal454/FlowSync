@@ -26,6 +26,7 @@ import { z } from "zod";
 import { authClient } from "@/lib/auth-client";
 import { Toast } from "radix-ui";
 import { toast } from "sonner";
+import Image from "next/image";
 
 const RegisterSchema = z
   .object({
@@ -100,6 +101,12 @@ export function RegisterForm() {
                     disabled={isPending}
                     type="button"
                   >
+                    <Image
+                      src="/logos/github.svg"
+                      alt="Github"
+                      width={20}
+                      height={20}
+                    />
                     continue with Github
                   </Button>
                   <Button
@@ -108,6 +115,12 @@ export function RegisterForm() {
                     disabled={isPending}
                     type="button"
                   >
+                    <Image
+                      src="/logos/google.svg"
+                      alt="Google"
+                      width={20}
+                      height={20}
+                    />
                     continue with Google
                   </Button>
                 </div>
