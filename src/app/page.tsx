@@ -15,11 +15,17 @@ const Page = () => {
   const queryClient = useQueryClient();
   const { data } = useQuery(trpc.getWorkflows.queryOptions()); //fetch  a  workflows from the server using trpc and useQuery hook .
 
-  const testAi = useMutation(trpc.testAi.mutationOptions({
-    onSuccess: () => {
+  const testAi = useMutation(
+    trpc.testAi.mutationOptions({
+      onSuccess: () => {
         toast.success("Ai job queued");
       },
-}));
+
+      onError: () => {
+        toast.error("Something went wrong");
+      },
+    }),
+  );
 
   const create = useMutation(
     //to create a new workflow using trpc and useMutation hook and we are also using the trpc client to call the trpc procedures
