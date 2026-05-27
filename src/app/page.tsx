@@ -1,14 +1,35 @@
+"use client";
+
 import { requireAuth } from "@/lib/auth-utils";
 import { caller } from "@/trpc/server";
 import { LogoutButton } from "./logout";
-const Page = async () => {
-  await requireAuth();
-  const data = await caller.getUsers();
+import { useTRPC } from "@/trpc/client";
+import { toast } from "sonner";
 
+import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
+
+import { Button } from "@/components/ui/button";
+
+const Page = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+  const { data } = useQuery(trpc.getWorkflows.queryOptions()); //fetch  a  workflows from the server using trpc and useQuery hook .
+
+  const create = useMutation(
+    //to create a new workflow using trpc and useMutation hook and we are also using the trpc client to call the trpc procedures
+    trpc.createWorkflow.mutationOptions({
+      onSuccess: () => {
+        toast.success("jon queued");
+      }, // to invalidate the queries after creating a new workflow so that we can get the updated list of workflows.
+    }),
+  );
   return (
     <div className="min-h-screen min-w-screen flex items-center justify-center">
       Protected server component.
       <div>{JSON.stringify(data, null, 2)}</div>
+      <Button disabled={create.isPending} onClick={() => create.mutate()}>
+        Create Workflow
+      </Button>
       <LogoutButton />
     </div>
   );
