@@ -7,18 +7,18 @@ import * as Sentry from "@sentry/nextjs";
 
 Sentry.init({
   dsn: "https://0f2ab271bb6a59d974e8c387d5aad4d7@o4511456451756032.ingest.us.sentry.io/4511463758823424",
-    Sentry.metrics.count('user_action', 1),
-      Sentry.metrics.distribution('api_response_time', 150),
 
-    integrations: [
-      // send console.log, console.warn, and console.error calls as logs to Sentry
 
-      //Add the Vercel AI integration to Sentry, which allows you to record inputs and outputs of AI calls for better debugging and monitoring.
+  integrations: [
 
-      Sentry.consoleLoggingIntegration({ levels: ["log", "warn", "error"] }),
-          // Use metrics in both server and client code
+    // send console.log, console.warn, and console.error calls as logs to Sentry
 
-    ],
+    //Add the Vercel AI integration to Sentry, which allows you to record inputs and outputs of AI calls for better debugging and monitoring.
+
+    Sentry.consoleLoggingIntegration({ levels: ["log", "warn", "error"] }),
+    // Use metrics in both server and client code
+
+  ],
   // Define how likely traces are sampled. Adjust this value in production, or use tracesSampler for greater control.
   tracesSampleRate: 1,
 

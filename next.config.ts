@@ -1,9 +1,20 @@
-import {withSentryConfig} from "@sentry/nextjs";
+import { withSentryConfig } from "@sentry/nextjs";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  devIndicators: false,
+
+  async redirects() {
+    return [
+      {
+        source: "/",
+        destination: "/workflows",
+        permanent: false,
+      },
+    ];
+  },
 };
+/* config options here */
 
 export default withSentryConfig(nextConfig, {
   // For all available options, see:
@@ -35,5 +46,5 @@ export default withSentryConfig(nextConfig, {
   // See the following for more information:
   // https://docs.sentry.io/product/crons/
   // https://vercel.com/docs/cron-jobs
-  automaticVercelMonitors: true
+  automaticVercelMonitors: true,
 });
