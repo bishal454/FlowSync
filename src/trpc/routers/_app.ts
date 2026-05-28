@@ -4,29 +4,12 @@ import { inngest } from "@/inngest/client";
 import { google } from "@ai-sdk/google";
 import { generateText } from "ai";
 import { TRPCError } from "@trpc/server";
+import { workflowsRouter } from "@/features/workflows/server/routers";
+
+
 export const appRouter = createTRPCRouter({
-  testAi: protectedProcedure.mutation(async () => {
-    await inngest.send({
-      name: "execute/ai",
-    });
+ workflows:workflowsRouter,
 
-    return { success: true, message: "job queued " };
-  }),
-
-  getWorkflows: protectedProcedure.query(({ ctx }) => {
-    // as get api call
-    return prisma.workflow.findMany();
-  }),
-
-  createWorkflow: protectedProcedure.mutation(async () => {
-    await inngest.send({
-      name: "test/hello.world",
-      data: {
-        email: "bishal@gmail.com",
-      },
-    });
-    return { success: true, message: "job queued " };
-  }),
 });
 // export type definition of API
 export type AppRouter = typeof appRouter;
