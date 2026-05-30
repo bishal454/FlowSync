@@ -1,11 +1,10 @@
 import prisma from "@/lib/db";
+import { createTRPCRouter, preminumProcedure, protectedProcedure } from "@/trpc/init";
 import { generateSlug } from "random-word-slugs";
-import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
-import { UserRoundIcon } from "lucide-react";
 import z from "zod";
 
 export const workflowsRouter = createTRPCRouter({
-  create: protectedProcedure.mutation(({ ctx }) => {
+  create: preminumProcedure.mutation(({ ctx }) => {
     return prisma.workflow.create({
       data: {
         name: generateSlug(3),

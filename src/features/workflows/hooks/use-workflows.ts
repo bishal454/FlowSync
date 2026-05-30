@@ -1,5 +1,7 @@
+
 import { useTRPC } from "@/trpc/client";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 /**
  * useSuspenseWorkflows
@@ -36,3 +38,34 @@ export const useSuspenseWorkflows = () => {
 
   return useSuspenseQuery(trpc.workflows.getMany.queryOptions());
 };
+//fetch all the workflow witht  the perfetch
+
+//hook to create a new  workflow
+
+export const useCreateWorkflow = () => {
+
+  const queryClient = useQueryClient();
+  const trpc = useTRPC();
+
+  return useMutation(
+
+    trpc.workflows.create.mutationOptions({
+      onSuccess: (data) => {
+
+        toast.success(`workflow ${data.name} created`);
+        queryClient.invalidateQueries(
+          trpc.workflows.getMany.queryOptions(),
+
+        )
+
+      },
+      onError: (error) => {
+        toast.error(`Failed to create a workflow :  ${error.message}`);
+
+      }
+    })
+  );
+};
+
+// as we remove the router.push so it does not have any sideeffct.
+// so it is safe to use it in the production
