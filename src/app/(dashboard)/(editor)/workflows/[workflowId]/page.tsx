@@ -1,20 +1,40 @@
-import {requireAuth} from "@/lib/auth-utils";
+import {
+  Editor,
+  EditorError,
+  EditorLoading
+} from "@/features/editor/components/editor";
+import { EditorHeader } from "@/features/editor/components/editor-header";
+
+import { prefetchWorkflow } from "@/features/workflows/server/prefetch";
+import { requireAuth } from "@/lib/auth-utils";
+import { HydrateClient } from "@/trpc/server";
+import { Suspense } from "react";
+import { ErrorBoundary } from "react-error-boundary";
+
 interface PageProps {
   params: Promise<{
-  workflowId: string;
-  }>;
-}
-//params should be a promise because we are using async/await to get the params from the URL. The params will be passed to the page component as a prop, and we can access theworkflowId from it.
+    workflowId: string;
+  }>
+};
 
 const Page = async ({ params }: PageProps) => {
   await requireAuth();
-  const {workflowId } = await params;
-  return <p>Workflow ID: {workflowId}</p>;
+
+  const { workflowId } = await params;
+  prefetchWorkflow(workflowId);
+
+  return (
+    <HydrateClient>
+      <ErrorBoundary fallback={<EditorError />}>
+        <Suspense fallback={<EditorLoading />}>
+          <EditorHeader workflowId={workflowId} />
+          <main className="flex-1">
+            <Editor workflowId={workflowId} />
+          </main>
+        </Suspense>
+      </ErrorBoundary>
+    </HydrateClient>
+  )
 };
 
 export default Page;
-
-
-//dynamic api are async because we need to wait for the params to be resolved before we can render the page. The params will be passed to the page component as a prop, and we can access the workflowId from it.
-
-//http://localhost:3000/workflows/12345
