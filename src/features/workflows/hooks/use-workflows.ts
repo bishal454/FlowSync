@@ -56,12 +56,13 @@ export const useCreateWorkflow = () => {
   return useMutation(
     trpc.workflows.create.mutationOptions({
       onSuccess: (data) => {
-        toast.success(`Workflow ${data.name} created successfully!`);
-        queryClient.invalidateQueries(trpc.workflows.getMany.queryOptions({}));
+        toast.success(`Workflow "${data.name}" created`);
+        queryClient.invalidateQueries(
+          trpc.workflows.getMany.queryOptions({}),
+        );
       },
-
       onError: (error) => {
-        toast.error(`Failed to create workflow:${error.message}`);
+        toast.error(`Failed to create workflow: ${error.message}`);
       },
     }),
   );
@@ -144,6 +145,26 @@ export const useUpdateWorkflow = () => {
       },
       onError: (error) => {
         toast.error(`Failed to save workflow: ${error.message}`);
+      },
+    }),
+  );
+};
+
+
+
+/**
+ * Hook to execute a workflow
+ */
+export const useExecuteWorkflow = () => {
+  const trpc = useTRPC();
+
+  return useMutation(
+    trpc.workflows.execute.mutationOptions({
+      onSuccess: (data) => {
+        toast.success(`Workflow "${data.name}" executed`);
+      },
+      onError: (error) => {
+        toast.error(`Failed to execute workflow: ${error.message}`);
       },
     }),
   );
