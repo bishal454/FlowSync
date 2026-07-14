@@ -1,16 +1,30 @@
-import { PAGINATION } from "@/config/constants";
-import prisma from "@/lib/db";
-import {
-  createTRPCRouter,
-  preminumProcedure,
-  protectedProcedure,
-} from "@/trpc/init";
 import { generateSlug } from "random-word-slugs";
+import prisma from "@/lib/db";
+import type { Node, Edge } from "@xyflow/react";
+import { createTRPCRouter, preminumProcedure, protectedProcedure } from "@/trpc/init";
 import z from "zod";
+import { PAGINATION } from "@/config/constants";
 import { NodeType } from "@/generated/prisma/enums";
-import type {Node,Edge, Connection} from "@xyflow/react";
+import { inngest } from "@/inngest/client";
 
 export const workflowsRouter = createTRPCRouter({
+  execute: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      const workflow = await prisma.workflow.findUniqueOrThrow({
+        where: {
+          id: input.id,
+          userId: ctx.auth.user.id,
+        },
+      });
+
+      await inngest.send({
+        name: "workflows/execute.workflow",
+        data: { workflowId: input.id },
+      });
+
+      return workflow;
+    }),
   create: preminumProcedure.mutation(({ ctx }) => {
     return prisma.workflow.create({
       data: {
@@ -32,13 +46,11 @@ export const workflowsRouter = createTRPCRouter({
       return prisma.workflow.delete({
         where: {
           id: input.id,
-          //this uses this id and currently logged in user and both needed
-          userId: ctx.auth.user.id, //only userid doesnt make the workflow unique
+          userId: ctx.auth.user.id,
         },
-      });
+      })
     }),
-
-     update: protectedProcedure
+  update: protectedProcedure
     .input(
       z.object({
         id: z.string(),
@@ -106,18 +118,14 @@ export const workflowsRouter = createTRPCRouter({
         return workflow;
       });
     }),
-
-
   updateName: protectedProcedure
     .input(z.object({ id: z.string(), name: z.string().min(1) }))
     .mutation(({ ctx, input }) => {
       return prisma.workflow.update({
         where: { id: input.id, userId: ctx.auth.user.id },
         data: { name: input.name },
-        //here we  update the name of the workflow.
       });
     }),
-
   getOne: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
@@ -150,7 +158,6 @@ export const workflowsRouter = createTRPCRouter({
         edges,
       };
     }),
-
   getMany: protectedProcedure
     .input(
       z.object({
@@ -161,15 +168,15 @@ export const workflowsRouter = createTRPCRouter({
           .max(PAGINATION.MAX_PAGE_SIZE)
           .default(PAGINATION.DEFAULT_PAGE_SIZE),
         search: z.string().default(""),
-      }),
+      })
     )
     .query(async ({ ctx, input }) => {
       const { page, pageSize, search } = input;
+
       const [items, totalCount] = await Promise.all([
         prisma.workflow.findMany({
           skip: (page - 1) * pageSize,
           take: pageSize,
-
           where: {
             userId: ctx.auth.user.id,
             name: {
@@ -178,7 +185,7 @@ export const workflowsRouter = createTRPCRouter({
             },
           },
           orderBy: {
-            createdAt: "desc",
+            updateAt: "desc",
           },
         }),
         prisma.workflow.count({
