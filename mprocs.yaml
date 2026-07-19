@@ -1,6 +1,12 @@
 procs:
+  ngrok:
+    cmd: ["npm", "run", "ngrok:dev"]
+
   inngest:
     cmd: ["npm", "run", "inngest:dev"]
 
   next:
     cmd: ["npm", "run", "dev"]
+
+  prisma:
+    cmd: ["npm", "run", "prisma:dev"]
