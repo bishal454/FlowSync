@@ -1,13 +1,5 @@
-import { Button } from "@/components/ui/button";
-import {
-  AlertTriangleIcon,
-  Loader2Icon,
-  PlusIcon,
-  SearchIcon,
-  PackageOpenIcon,
-  MoreVerticalIcon,
-  TrashIcon,
-} from "lucide-react";
+import { AlertTriangleIcon, Loader2Icon, MoreVerticalIcon, PackageOpenIcon, PlusIcon, SearchIcon, TrashIcon } from "lucide-react";
+import { Button } from "./ui/button";
 import Link from "next/link";
 import { Input } from "./ui/input";
 import {
@@ -19,7 +11,12 @@ import {
   EmptyTitle,
 } from "./ui/empty";
 import { cn } from "@/lib/utils";
-import { Card, CardContent, CardDescription, CardTitle } from "./ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardTitle,
+} from "./ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -30,12 +27,12 @@ import {
 type EntityHeaderProps = {
   title: string;
   description?: string;
-  newButtonlabel: string;
+  newButtonLabel?: string;
   disabled?: boolean;
   isCreating?: boolean;
 } & (
-  | { onNew: () => void; newButtonHref?: never } //is a function if we pass this then the button canot be passable  so only one of them
-  | { newButtonHref: string; onNew?: never } //
+  | { onNew: () => void; newButtonHref?: never }
+  | { newButtonHref: string; onNew?: never }
   | { onNew?: never; newButtonHref?: never }
 );
 
@@ -43,16 +40,15 @@ export const EntityHeader = ({
   title,
   description,
   onNew,
-  newButtonlabel,
   newButtonHref,
+  newButtonLabel,
   disabled,
   isCreating,
 }: EntityHeaderProps) => {
   return (
-    <div className="flex flex-row items-center justify-between gap-x-4 ">
+    <div className="flex flex-row items-center justify-between gap-x-4">
       <div className="flex flex-col">
-        <h1 className="text-lg md:text-xl font-semibold ">{title}</h1>
-
+        <h1 className="text-lg md:text-xl font-semibold">{title}</h1>
         {description && (
           <p className="text-xs md:text-sm text-muted-foreground">
             {description}
@@ -60,19 +56,26 @@ export const EntityHeader = ({
         )}
       </div>
       {onNew && !newButtonHref && (
-        <Button disabled={isCreating || disabled} size="sm" onClick={onNew}>
+        <Button
+          disabled={isCreating || disabled}
+          size="sm"
+          onClick={onNew}
+        >
           <PlusIcon className="size-4" />
-          {newButtonlabel}
+          {newButtonLabel}
         </Button>
       )}
-      {!onNew && newButtonHref && (
-        <Button size="sm" asChild>
+      {newButtonHref && !onNew && (
+        <Button
+          size="sm"
+          asChild
+        >
           <Link href={newButtonHref} prefetch>
-            {newButtonlabel}
+            <PlusIcon className="size-4" />
+            {newButtonLabel}
           </Link>
         </Button>
       )}
-      ;
     </div>
   );
 };
@@ -101,14 +104,14 @@ export const EntityContainer = ({
         {pagination}
       </div>
     </div>
-  );
+  )
 };
 
 interface EntitySearchProps {
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
-}
+};
 
 export const EntitySearch = ({
   value,
@@ -118,9 +121,8 @@ export const EntitySearch = ({
   return (
     <div className="relative ml-auto">
       <SearchIcon className="size-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-
       <Input
-        className="max-w-50  bg-background  shadow-none border-border pl-8"
+        className="max-w-50 bg-background shadow-none border-border pl-8"
         placeholder={placeholder}
         value={value}
         onChange={(e) => onChange(e.target.value)}
@@ -134,7 +136,7 @@ interface EntityPaginationProps {
   totalPages: number;
   onPageChange: (page: number) => void;
   disabled?: boolean;
-}
+};
 
 export const EntityPagination = ({
   page,
@@ -149,53 +151,69 @@ export const EntityPagination = ({
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
         <Button
-          disabled={disabled || page <= 1}
+          disabled={page === 1 || disabled}
           variant="outline"
-          onClick={() => onPageChange(Math.max(1, page - 1))}
           size="sm"
+          onClick={() => onPageChange(Math.max(1, page - 1))}
         >
           Previous
         </Button>
         <Button
-          disabled={disabled || page >= totalPages || totalPages === 0}
+          disabled={page === totalPages || totalPages === 0 || disabled}
           variant="outline"
-          onClick={() => onPageChange(Math.min(totalPages, page + 1))}
           size="sm"
+          onClick={() => onPageChange(Math.min(totalPages, page + 1))}
         >
           Next
         </Button>
       </div>
     </div>
-  );
+  )
 };
 
 interface StateViewProps {
   message?: string;
-}
+};
 
-export const LoadingView = ({ message }: StateViewProps) => {
+export const LoadingView = ({
+  message,
+}: StateViewProps) => {
   return (
     <div className="flex justify-center items-center h-full flex-1 flex-col gap-y-4">
       <Loader2Icon className="size-6 animate-spin text-primary" />
-      {!!message && <p className="text-sm text-muted-foreground">{message}</p>}
+      {!!message && (
+        <p className="text-sm text-muted-foreground">
+          {message}
+        </p>
+      )}
     </div>
   );
 };
 
-export const ErrorView = ({ message }: StateViewProps) => {
+
+export const ErrorView = ({
+  message,
+}: StateViewProps) => {
   return (
     <div className="flex justify-center items-center h-full flex-1 flex-col gap-y-4">
       <AlertTriangleIcon className="size-6 text-primary" />
-      {!!message && <p className="text-sm text-muted-foreground">{message}</p>}
+      {!!message && (
+        <p className="text-sm text-muted-foreground">
+          {message}
+        </p>
+      )}
     </div>
   );
 };
 
 interface EmptyViewProps extends StateViewProps {
   onNew?: () => void;
-}
+};
 
-export const EmptyView = ({ message, onNew }: EmptyViewProps) => {
+export const EmptyView = ({
+  message,
+  onNew
+}: EmptyViewProps) => {
   return (
     <Empty className="border border-dashed bg-white">
       <EmptyHeader>
@@ -203,11 +221,19 @@ export const EmptyView = ({ message, onNew }: EmptyViewProps) => {
           <PackageOpenIcon />
         </EmptyMedia>
       </EmptyHeader>
-      <EmptyTitle>No items</EmptyTitle>
-      {!!message && <EmptyDescription>{message}</EmptyDescription>}
+      <EmptyTitle>
+        No items
+      </EmptyTitle>
+      {!!message && (
+        <EmptyDescription>
+          {message}
+        </EmptyDescription>
+      )}
       {!!onNew && (
         <EmptyContent>
-          <Button onClick={onNew}>Add item</Button>
+          <Button onClick={onNew}>
+            Add item
+          </Button>
         </EmptyContent>
       )}
     </Empty>
@@ -220,7 +246,7 @@ interface EntityListProps<T> {
   getKey?: (item: T, index: number) => string | number;
   emptyView?: React.ReactNode;
   className?: string;
-}
+};
 
 export function EntityList<T>({
   items,
@@ -238,7 +264,10 @@ export function EntityList<T>({
   }
 
   return (
-    <div className={cn("flex flex-col gap-y-4", className)}>
+    <div className={cn(
+      "flex flex-col gap-y-4",
+      className,
+    )}>
       {items.map((item, index) => (
         <div key={getKey ? getKey(item, index) : index}>
           {renderItem(item, index)}
@@ -246,7 +275,7 @@ export function EntityList<T>({
       ))}
     </div>
   );
-}
+};
 
 interface EntityItemProps {
   href: string;
@@ -257,7 +286,7 @@ interface EntityItemProps {
   onRemove?: () => void | Promise<void>;
   isRemoving?: boolean;
   className?: string;
-}
+};
 
 export const EntityItem = ({
   href,
@@ -280,7 +309,7 @@ export const EntityItem = ({
     if (onRemove) {
       await onRemove();
     }
-  };
+  }
 
   return (
     <Link href={href} prefetch>
@@ -295,7 +324,9 @@ export const EntityItem = ({
           <div className="flex items-center gap-3">
             {image}
             <div>
-              <CardTitle className="text-base font-medium">{title}</CardTitle>
+              <CardTitle className="text-base font-medium">
+                {title}
+              </CardTitle>
               {!!subtitle && (
                 <CardDescription className="text-xs">
                   {subtitle}
@@ -333,5 +364,5 @@ export const EntityItem = ({
         </CardContent>
       </Card>
     </Link>
-  );
+  )
 };
