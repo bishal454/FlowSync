@@ -55,7 +55,7 @@ export const CredentialsHeader = ({ disabled }: { disabled?: boolean }) => {
       title="Credentials"
       description="Create and manage your credentials"
       newButtonHref="/credentials/new"
-      newButtonlabel="New credential"
+      newButtonLabel="New credential"
       disabled={disabled}
     />
   );
