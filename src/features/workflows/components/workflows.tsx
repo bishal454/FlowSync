@@ -1,5 +1,5 @@
 "use client";
-import { formatDistanceToNow } from "date-fns";
+
 import {
   EmptyView,
   EntityContainer,
@@ -23,7 +23,7 @@ import { PAGINATION } from "@/config/constants";
 import { useWorkflowsParams } from "@/features/workflows/hooks/use-workflows-params";
 import type { Workflow } from "@/generated/prisma/client";
 import { useEntitySearch } from "@/hooks/use-entity-search";
-
+import { formatDistanceToNow } from "date-fns";
 import { WorkflowIcon } from "lucide-react";
 
 export const WorkflowsSearch = () => {
