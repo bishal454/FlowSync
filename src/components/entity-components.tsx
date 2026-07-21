@@ -70,8 +70,6 @@ export const EntityHeader = ({
           <Link href={newButtonHref} prefetch>
             {newButtonlabel}
           </Link>
-
-          {newButtonlabel}
         </Button>
       )}
       ;
